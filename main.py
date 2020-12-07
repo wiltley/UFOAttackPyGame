@@ -19,7 +19,7 @@ waveSpawnerRect=waveSpawnerRect.move(0,22)
 background = pygame.image.load("background.png")
 loserMessage = font.render('You lose!', 0, (255,0,0))
 loserMessageRect = loserMessage.get_rect()
-loserMessageRect  = loserMessageRect.move(65,260)
+loserMessageRect  = loserMessageRect.move(5,260)
 waveSpawnerRect= waveSpawnerRect.move(0,0) 
 
 class player:
@@ -30,7 +30,7 @@ class player:
         self.speed = [1, 0]
         self.moveRight = 0
         self.moveLeft = 0
-        self.lives = 30
+        self.lives = 5
     def move(self, dir):
         if(self.rect.left == 0):
             self.rect = self.rect.move(5,0)
@@ -74,7 +74,7 @@ explosionArray = []
 
 while 1:
     time.sleep(0.01)
-    if(math.ceil(time.time()) - math.ceil(currentTime) == 5):
+    if(math.ceil(time.time()) - math.ceil(currentTime) == 5 and waveNumber != -1):
         i = 0
         for i in range((waveNumber*2)+1):
             enemyArray.append(enemy(size))
@@ -94,9 +94,17 @@ while 1:
             if event.key == pygame.K_LEFT:
                 player.moveLeft = 1
                 player.moveRight = 0
+            if event.key == pygame.K_SPACE and waveNumber == -1:
+                waveNumber = 0
+                player.lives = 5
+                player.rect.move(130,470)
+                currentTime = time.time()-3
+               
         if event.type == pygame.KEYUP:
-            player.moveLeft = 0
-            player.moveRight = 0
+            if event.key == pygame.K_LEFT:
+                player.moveLeft = 0
+            if event.key == pygame.K_RIGHT:
+                player.moveRight = 0
 
     if(player.moveRight == 1):
         player.move(5)
@@ -123,11 +131,13 @@ while 1:
 
 
     if player.lives <= 0:
-        break
-        font = pygame.font.Font('freesansbold.ttf', 40)
-        loserMessage = font.render('You lose!', 0, (255,0,0))
+        waveNumber = -1
+        font = pygame.font.Font('freesansbold.ttf', 20)
+        loserMessage = font.render('You lose! [space] to try again!', 0, (255,0,0))
         screen.blit(loserMessage, loserMessageRect)
         font = pygame.font.Font('freesansbold.ttf', 20)
+        enemyArray = []
+
     # GUI STUFF
     screen.blit(wave, wave.get_rect())
     screen.blit(waveSpawner, waveSpawnerRect)
@@ -142,3 +152,6 @@ while 1:
         te.increaseCount()
 
     pygame.display.flip()
+
+while 1:
+    print ("ok")
